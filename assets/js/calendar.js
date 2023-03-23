@@ -1,3 +1,9 @@
+import {
+  ICalendar,
+  GoogleCalendar,
+  OutlookCalendar,
+} from "https://cdn.jsdelivr.net/npm/datebook@8.0.0/+esm";
+
 const icalButton = document.getElementById("ical-button");
 const googleButton = document.getElementById("google-button");
 const outlookButton = document.getElementById("outlook-button");
@@ -27,22 +33,27 @@ function formatTime(time) {
   return time.replace(/[-:]/g, "");
 }
 
-function generateICalUrl(startDate, endDate) {
+function generateICal(startDate, endDate) {
   const startDateString = formatDate(startDate);
   const endDateString = formatDate(endDate);
+  const selectedTime = timeInput.value;
+  const urlFormatTime = formatTime(selectedTime);
 
-  const url =
-    `data:text/calendar;charset=utf-8,` +
-    `BEGIN:VCALENDAR\n` +
-    `VERSION:2.0\n` +
-    `BEGIN:VEVENT\n` +
-    `DTSTART;VALUE=DATE:${startDateString}\n` +
-    `DTEND;VALUE=DATE:${endDateString}\n` +
-    `recur=RRULE:FREQ=DAILY;UNTIL=${endDateString}\n` +
-    `END:VEVENT\n` +
-    `END:VCALENDAR\n`;
+  const options = {
+    title: "Lifetones Reminder",
+    description: "Remember to take Lifetones every day for lasting relief!",
+    location: "Anywhere",
+    start: startDate,
+    end: endDate,
+    recurrence: {
+      freq: "DAILY",
+      interval: 1,
+      count: 60,
+    },
+  };
 
-  return encodeURI(url);
+  const calendar = new ICalendar(options);
+  return calendar.render();
 }
 
 function generateGoogleUrl(startDate, endDate) {
@@ -56,41 +67,44 @@ function generateGoogleUrl(startDate, endDate) {
 
   const url =
     `https://calendar.google.com/calendar/render?action=TEMPLATE` +
-    `&dates=${startDateString}T${urlFormatTime}/${endDateString}T${urlFormatTime}` +
-    `&recur=RRULE:FREQ=DAILY` +
+    `&dates=${startDateString}T${urlFormatTime}` +
+    `&recur=RRULE:FREQ=DAILY;COUNT=30` +
     `&text=Lifetones%20Reminder` +
     `&details=Remember%20to%20take%20Lifetones%20every%20day%20for%20lasting%20relief!`;
 
   return url;
 }
 
-function generateOutlookUrl(startDate, endDate) {
-  const startDateString = formatDate(startDate);
-  const endDateString = formatDate(endDate);
+function generateOutlook(startDate, endDate) {
+  const selectedTime = timeInput.value;
+  const urlFormatTime = formatTime(selectedTime);
+  startDate.setDate(startDate.getDate() + 1);
+  startDate.setHours(urlFormatTime.slice(0, 2));
 
-  const url =
-    `data:text/calendar;charset=utf-8,` +
-    `BEGIN:VCALENDAR\n` +
-    `VERSION:2.0\n` +
-    `BEGIN:VEVENT\n` +
-    `DTSTART:${startDateString}\n` +
-    `DTEND:${endDateString}\n` +
-    `RRULE:FREQ=DAILY;UNTIL=${endDateString}\n` +
-    `SUMMARY:Recurring Event\n` +
-    `END:VEVENT\n` +
-    `END:VCALENDAR\n`;
+  const options = {
+    title: "Lifetones Reminder",
+    description: "Remember to take Lifetones every day for lasting relief!",
+    start: startDate,
+    end: startDate,
+    recurrence: {
+      freq: "DAILY",
+      interval: 1,
+      count: 30,
+    },
+  };
 
-  return encodeURI(url);
+  const calendar = new OutlookCalendar(options);
+  return calendar.render();
 }
 
-function generateCalendarUrls(startDate) {
+function generateCalendars(startDate) {
   const endDate = new Date(startDate);
-  endDate.setDate(endDate.getDate() + 60); // set end date to 60 days after start date
+  endDate.setDate(endDate.getDate() + 30); // set end date to 30 days after start date
 
   return {
-    icalUrl: generateICalUrl(startDate, endDate),
+    icalUrl: generateICal(startDate, endDate),
     googleUrl: generateGoogleUrl(startDate, endDate),
-    outlookUrl: generateOutlookUrl(startDate, endDate),
+    outlookUrl: generateOutlook(startDate, endDate),
   };
 }
 
@@ -100,7 +114,10 @@ function handleICalButtonClick(event) {
   // ga("send", "event", "Button", "click", "iCal");
 
   const startDate = new Date(dateRangeInput.value);
-  const { icalUrl } = generateCalendarUrls(startDate);
+  const endDate = new Date(startDate);
+  endDate.setDate(endDate.getDate() + 30);
+  const { icalUrl } = generateCalendars(startDate);
+
   window.open(icalUrl, "_blank");
 }
 
@@ -110,7 +127,7 @@ function handleGoogleButtonClick(event) {
   // ga("send", "event", "Button", "click", "Google Calendar");
 
   const startDate = new Date(dateRangeInput.value);
-  const { googleUrl } = generateCalendarUrls(startDate);
+  const { googleUrl } = generateCalendars(startDate);
   window.open(googleUrl, "_blank");
 }
 
@@ -119,7 +136,7 @@ function handleOutlookButtonClick(event) {
   // add Google Analytics tracking code here
   // ga("send", "event", "Button", "click", "Outlook");
   const startDate = new Date(dateRangeInput.value);
-  const { outlookUrl } = generateCalendarUrls(startDate);
+  const { outlookUrl } = generateCalendars(startDate);
   window.open(outlookUrl, "_blank");
 }
 
