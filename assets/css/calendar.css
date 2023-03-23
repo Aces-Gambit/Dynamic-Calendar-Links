@@ -75,11 +75,10 @@ select {
 
 select,
 input {
-  width: 100%;
   height: 40px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  padding: 0 10px;
+  text-align: center;
   font-size: 18px;
   color: #333;
   background-color: #eee;

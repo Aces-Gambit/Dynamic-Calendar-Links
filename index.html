@@ -15,10 +15,14 @@
     <script src="assets/js/calendar-refactor.js" type="module" defer></script>
   </head>
   <body class="h-[100vh] grid place-center">
+    <!-- <header>
+      <div class="svg-logo"></div>
+      <div class="svg-calendar"></div>
+    </header> -->
     <main class="max-w-[1200px] m-auto">
       <form class="w-full m-auto text-center text-xl">
         <div class="flex flex-wrap justify-around gap-y-4">
-          <div>
+          <div class="flex flex-col">
             <label for="date-range">Select Start Date:</label>
             <input
               type="date"
@@ -29,7 +33,7 @@
               value=""
             />
           </div>
-          <div>
+          <div class="flex flex-col">
             <label for="time-dropdown">Choose a time:</label>
             <select id="time-dropdown" name="time-dropdown" required>
               <option value="01:00:00">1:00 AM</option>
