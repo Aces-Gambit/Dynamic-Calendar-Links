@@ -38,7 +38,7 @@ function buildCalendarOptions(startDate, endDate) {
     start: startDate,
     end: endDate,
     recurrence: {
-      freq: "DAILY",
+      frequency: "DAILY",
       interval: 1,
       count: 60,
     },
@@ -63,6 +63,10 @@ function calculateEndDate(startDate) {
   return endDate;
 }
 
+function isMobileOrTablet() {
+  return /Mobi|Tablet|iPad|iPhone|Android/i.test(window.navigator.userAgent);
+}
+
 function handleCalendarButtonClick(event, calendarType) {
   event.preventDefault();
 
@@ -71,18 +75,12 @@ function handleCalendarButtonClick(event, calendarType) {
   const options = buildCalendarOptions(startDate, endDate);
 
   let calendar;
+  let url;
 
   switch (calendarType) {
     case "iCal":
       calendar = new ICalendar(options);
-      const blob = new Blob([calendar.render()], {
-        type: "text/calendar;charset=utf-8",
-      });
-      const link = document.createElement("a");
-      link.href = window.URL.createObjectURL(blob);
-      link.download = "Lifetones-Reminder.ics";
-      link.click();
-      return;
+      break;
     case "Google":
       calendar = new GoogleCalendar(options);
       break;
@@ -93,7 +91,19 @@ function handleCalendarButtonClick(event, calendarType) {
       return;
   }
 
-  window.open(calendar.render(), "_blank");
+  if (isMobileOrTablet() || calendarType === "iCal") {
+    const blob = new Blob([calendar.render()], {
+      type: "text/calendar;charset=utf-8",
+    });
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.download = "Lifetones-Reminder.ics";
+    link.click();
+  } else {
+    url = calendar.render();
+
+    window.open(url, "_blank");
+  }
 }
 
 icalButton.addEventListener("click", (event) =>
