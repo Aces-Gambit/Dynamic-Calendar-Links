@@ -80,7 +80,14 @@ function handleCalendarButtonClick(event, calendarType) {
   switch (calendarType) {
     case "iCal":
       calendar = new ICalendar(options);
-      break;
+      const blob = new Blob([calendar.render()], {
+        type: "text/calendar;charset=utf-8",
+      });
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "Lifetones-Reminder.ics";
+      link.click();
+      return;
     case "Google":
       calendar = new GoogleCalendar(options);
       break;
@@ -91,19 +98,8 @@ function handleCalendarButtonClick(event, calendarType) {
       return;
   }
 
-  if (isMobileOrTablet() || calendarType === "iCal") {
-    const blob = new Blob([calendar.render()], {
-      type: "text/calendar;charset=utf-8",
-    });
-    const link = document.createElement("a");
-    link.href = window.URL.createObjectURL(blob);
-    link.download = "Lifetones-Reminder.ics";
-    link.click();
-  } else {
-    url = calendar.render();
-
-    window.open(url, "_blank");
-  }
+  url = calendar.render();
+  window.open(url, "_blank");
 }
 
 icalButton.addEventListener("click", (event) =>
