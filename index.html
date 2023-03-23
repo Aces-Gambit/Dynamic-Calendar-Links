@@ -16,8 +16,8 @@
   </head>
   <body class="h-[100vh] grid place-center">
     <main class="max-w-[1200px] m-auto">
-      <form class="w-full m-auto text-center">
-        <div class="flex flex-wrap justify-around">
+      <form class="w-full m-auto text-center text-xl">
+        <div class="flex flex-wrap justify-around gap-y-4">
           <div>
             <label for="date-range">Select Start Date:</label>
             <input
@@ -59,7 +59,9 @@
             </select>
           </div>
         </div>
-        <div class="flex flex-wrap gap-10 justify-center my-10">
+        <div
+          class="flex flex-col md:flex-row md:flex-wrap gap-10 justify-center items-center my-10"
+        >
           <button id="ical-button">
             <img
               src="assets/images/apple.svg"
