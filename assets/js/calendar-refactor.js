@@ -10,6 +10,17 @@ const outlookButton = document.getElementById("outlook-button");
 const dateRangeInput = document.getElementById("date-range");
 const timeInput = document.getElementById("time-dropdown");
 
+const now = new Date();
+console.log("Raw Date Data:", now);
+
+// Get the time zone offset in minutes
+const timeZoneOffset = now.getTimezoneOffset();
+console.log("Time Zone Offset (minutes):", timeZoneOffset);
+
+// Get the time zone name
+const timeZoneName = Intl.DateTimeFormat().resolvedOptions().timeZone;
+console.log("Time Zone Name:", timeZoneName);
+
 // Set default values for date input fields
 setDefaultDateValues();
 
